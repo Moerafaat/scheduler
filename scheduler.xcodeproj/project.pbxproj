@@ -10,6 +10,7 @@
 		D897178027638CCE00292AA0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D897177F27638CCE00292AA0 /* main.cpp */; };
 		D89717A0276406CB00292AA0 /* cron_scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D897179E276406CB00292AA0 /* cron_scheduler.cpp */; };
 		D89717A4276406D800292AA0 /* thread_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717A2276406D800292AA0 /* thread_pool.cpp */; };
+		D89717CA2766680C00292AA0 /* workers_busy_exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717C82766680C00292AA0 /* workers_busy_exception.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +32,9 @@
 		D897179F276406CB00292AA0 /* cron_scheduler.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cron_scheduler.hpp; sourceTree = "<group>"; };
 		D89717A2276406D800292AA0 /* thread_pool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = thread_pool.cpp; sourceTree = "<group>"; };
 		D89717A3276406D800292AA0 /* thread_pool.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = thread_pool.hpp; sourceTree = "<group>"; };
+		D89717B22764F9B400292AA0 /* spdlog */ = {isa = PBXFileReference; lastKnownFileType = folder; path = spdlog; sourceTree = "<group>"; };
+		D89717C82766680C00292AA0 /* workers_busy_exception.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = workers_busy_exception.cpp; sourceTree = "<group>"; };
+		D89717C92766680C00292AA0 /* workers_busy_exception.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = workers_busy_exception.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,8 @@
 		D897177E27638CCE00292AA0 /* scheduler */ = {
 			isa = PBXGroup;
 			children = (
+				D89717AC2764F86300292AA0 /* include */,
+				D89717A82764F20E00292AA0 /* test */,
 				D897179C276406A600292AA0 /* cron_scheduler */,
 				D897177F27638CCE00292AA0 /* main.cpp */,
 			);
@@ -82,10 +88,35 @@
 		D897179D276406B300292AA0 /* thread_pool */ = {
 			isa = PBXGroup;
 			children = (
+				D89717C7276667D200292AA0 /* exceptions */,
 				D89717A2276406D800292AA0 /* thread_pool.cpp */,
 				D89717A3276406D800292AA0 /* thread_pool.hpp */,
 			);
 			path = thread_pool;
+			sourceTree = "<group>";
+		};
+		D89717A82764F20E00292AA0 /* test */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
+		D89717AC2764F86300292AA0 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				D89717B22764F9B400292AA0 /* spdlog */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		D89717C7276667D200292AA0 /* exceptions */ = {
+			isa = PBXGroup;
+			children = (
+				D89717C82766680C00292AA0 /* workers_busy_exception.cpp */,
+				D89717C92766680C00292AA0 /* workers_busy_exception.hpp */,
+			);
+			path = exceptions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -144,6 +175,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D89717CA2766680C00292AA0 /* workers_busy_exception.cpp in Sources */,
 				D897178027638CCE00292AA0 /* main.cpp in Sources */,
 				D89717A0276406CB00292AA0 /* cron_scheduler.cpp in Sources */,
 				D89717A4276406D800292AA0 /* thread_pool.cpp in Sources */,
@@ -156,7 +188,7 @@
 		D897178127638CCE00292AA0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -204,18 +236,20 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "${SRCROOT}/scheduler/include/**";
 				MACOSX_DEPLOYMENT_TARGET = 11.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/scheduler/include/**";
 			};
 			name = Debug;
 		};
 		D897178227638CCE00292AA0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -257,10 +291,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "${SRCROOT}/scheduler/include/**";
 				MACOSX_DEPLOYMENT_TARGET = 11.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/scheduler/include/**";
 			};
 			name = Release;
 		};

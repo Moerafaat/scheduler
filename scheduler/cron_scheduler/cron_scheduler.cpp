@@ -6,26 +6,30 @@
 //
 
 #include "cron_scheduler.hpp"
-#include <iostream>
-using namespace std;
+#include "spdlog/spdlog.h"
 
-CronScheduler::CronScheduler() {
-    std::cout << "Hello Constructor" << std::endl;
-}
+namespace sched {
+    CronScheduler::CronScheduler(unsigned int poolSize) : threadPool(poolSize) {
+        
+    }
 
-CronScheduler::~CronScheduler() {
-    
-}
+    CronScheduler::~CronScheduler() {
+        spdlog::info("~CronScheduler() - Terminating...");
+    }
 
-template <typename F>
-void CronScheduler::scheduleJob(const F &job, std::chrono::milliseconds expectedIntervalMs, std::chrono::milliseconds frequency) {
-    threadPool.dispatchJob(job, expectedIntervalMs);
-}
+    void CronScheduler::removeJob(int jobId) {
+        
+    }
 
-template <typename F, typename... A>
-void CronScheduler::scheduleJob(const F &job, const A &...args,
-                                std::chrono::milliseconds expectedIntervalMs, std::chrono::milliseconds frequency) {
-    scheduleJob([job, args..., expectedIntervalMs, frequency] {
-        job(args..., expectedIntervalMs, frequency);
-    });
+    void CronScheduler::terminate() {
+        
+    }
+
+    void CronScheduler::validateInputsOrThrow() {
+        
+    }
+
+    void CronScheduler::dispatcher() {
+        
+    }
 }
