@@ -6,7 +6,6 @@
 #include <spdlog/common.h>
 #include <spdlog/details/log_msg.h>
 #include <spdlog/details/os.h>
-#include <spdlog/details/fmt_helper.h>
 #include <spdlog/formatter.h>
 
 #include <chrono>
@@ -83,6 +82,9 @@ public:
     explicit pattern_formatter(std::string pattern, pattern_time_type time_type = pattern_time_type::local,
         std::string eol = spdlog::details::os::default_eol, custom_flags custom_user_flags = custom_flags());
 
+    // use default pattern is not given
+    explicit pattern_formatter(pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol);
+
     pattern_formatter(const pattern_formatter &other) = delete;
     pattern_formatter &operator=(const pattern_formatter &other) = delete;
 
@@ -117,10 +119,6 @@ private:
 
     void compile_pattern_(const std::string &pattern);
 };
-
-// set pattern to logger
-SPDLOG_API void set_pattern(logger &logger, std::string pattern);
-
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY

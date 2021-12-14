@@ -8,6 +8,8 @@
 #endif
 
 #include <spdlog/sinks/sink.h>
+#include <spdlog/details/backtracer.h>
+#include <spdlog/pattern_formatter.h>
 
 #include <cstdio>
 
@@ -20,13 +22,15 @@ SPDLOG_INLINE logger::logger(const logger &other)
     , level_(other.level_.load(std::memory_order_relaxed))
     , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
     , custom_err_handler_(other.custom_err_handler_)
+    , tracer_(other.tracer_)
 {}
 
 SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT : name_(std::move(other.name_)),
                                                                sinks_(std::move(other.sinks_)),
                                                                level_(other.level_.load(std::memory_order_relaxed)),
                                                                flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
-                                                               custom_err_handler_(std::move(other.custom_err_handler_))
+                                                               custom_err_handler_(std::move(other.custom_err_handler_)),
+                                                               tracer_(std::move(other.tracer_))
 
 {}
 
@@ -52,6 +56,7 @@ SPDLOG_INLINE void logger::swap(spdlog::logger &other) SPDLOG_NOEXCEPT
     other.flush_level_.store(my_level);
 
     custom_err_handler_.swap(other.custom_err_handler_);
+    std::swap(tracer_, other.tracer_);
 }
 
 SPDLOG_INLINE void swap(logger &a, logger &b)
@@ -91,6 +96,29 @@ SPDLOG_INLINE void logger::set_formatter(std::unique_ptr<formatter> f)
             (*it)->set_formatter(f->clone());
         }
     }
+}
+
+SPDLOG_INLINE void logger::set_pattern(std::string pattern, pattern_time_type time_type)
+{
+    auto new_formatter = details::make_unique<pattern_formatter>(std::move(pattern), time_type);
+    set_formatter(std::move(new_formatter));
+}
+
+// create new backtrace sink and move to it all our child sinks
+SPDLOG_INLINE void logger::enable_backtrace(size_t n_messages)
+{
+    tracer_.enable(n_messages);
+}
+
+// restore orig sinks and level and delete the backtrace sink
+SPDLOG_INLINE void logger::disable_backtrace()
+{
+    tracer_.disable();
+}
+
+SPDLOG_INLINE void logger::dump_backtrace()
+{
+    dump_backtrace_();
 }
 
 // flush functions
@@ -134,6 +162,19 @@ SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name)
     return cloned;
 }
 
+// protected methods
+SPDLOG_INLINE void logger::log_it_(const spdlog::details::log_msg &log_msg, bool log_enabled, bool traceback_enabled)
+{
+    if (log_enabled)
+    {
+        sink_it_(log_msg);
+    }
+    if (traceback_enabled)
+    {
+        tracer_.push_back(log_msg);
+    }
+}
+
 SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg)
 {
     for (auto &sink : sinks_)
@@ -166,6 +207,17 @@ SPDLOG_INLINE void logger::flush_()
     }
 }
 
+SPDLOG_INLINE void logger::dump_backtrace_()
+{
+    using details::log_msg;
+    if (tracer_.enabled())
+    {
+        sink_it_(log_msg{name(), level::info, "****************** Backtrace Start ******************"});
+        tracer_.foreach_pop([this](const log_msg &msg) { this->sink_it_(msg); });
+        sink_it_(log_msg{name(), level::info, "****************** Backtrace End ********************"});
+    }
+}
+
 SPDLOG_INLINE bool logger::should_flush_(const details::log_msg &msg)
 {
     auto flush_level = flush_level_.load(std::memory_order_relaxed);
@@ -180,14 +232,25 @@ SPDLOG_INLINE void logger::err_handler_(const std::string &msg)
     }
     else
     {
-        auto now = log_clock::now();
-        auto tm_time = details::os::localtime(log_clock::to_time_t(now));
+        using std::chrono::system_clock;
+        static std::mutex mutex;
+        static std::chrono::system_clock::time_point last_report_time;
+        static size_t err_counter = 0;
+        std::lock_guard<std::mutex> lk{mutex};
+        auto now = system_clock::now();
+        err_counter++;
+        if (now - last_report_time < std::chrono::seconds(1))
+        {
+            return;
+        }
+        last_report_time = now;
+        auto tm_time = details::os::localtime(system_clock::to_time_t(now));
         char date_buf[64];
         std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
 #if defined(USING_R) && defined(R_R_H) // if in R environment
-        REprintf("[*** LOG ERROR ***] [%s] [%s] {%s}\n", date_buf, name().c_str(), msg.c_str());
+        REprintf("[*** LOG ERROR #%04zu ***] [%s] [%s] {%s}\n", err_counter, date_buf, name().c_str(), msg.c_str());
 #else
-        std::fprintf(stderr, "[*** LOG ERROR ***] [%s] [%s] {%s}\n", date_buf, name().c_str(), msg.c_str());
+        std::fprintf(stderr, "[*** LOG ERROR #%04zu ***] [%s] [%s] {%s}\n", err_counter, date_buf, name().c_str(), msg.c_str());
 #endif
     }
 }

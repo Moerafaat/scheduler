@@ -9,6 +9,7 @@
 
 #include <spdlog/spdlog.h>
 #include <spdlog/details/os.h>
+#include <spdlog/details/registry.h>
 
 #include <algorithm>
 #include <string>
@@ -78,15 +79,17 @@ inline std::unordered_map<std::string, std::string> extract_key_vals_(const std:
     return rv;
 }
 
-SPDLOG_INLINE std::unordered_map<std::string, level::level_enum> load_levels(const std::string &input)
+SPDLOG_INLINE void load_levels(const std::string &input)
 {
-    std::unordered_map<std::string, level::level_enum> levels;
     if (input.empty() || input.size() > 512)
     {
-        return levels;
+        return;
     }
 
     auto key_vals = extract_key_vals_(input);
+    std::unordered_map<std::string, level::level_enum> levels;
+    level::level_enum global_level = level::info;
+    bool global_level_found = false;
 
     for (auto &name_level : key_vals)
     {
@@ -98,9 +101,18 @@ SPDLOG_INLINE std::unordered_map<std::string, level::level_enum> load_levels(con
         {
             continue;
         }
-        levels[logger_name] = level;
+        if (logger_name.empty()) // no logger name indicate global level
+        {
+            global_level_found = true;
+            global_level = level;
+        }
+        else
+        {
+            levels[logger_name] = level;
+        }
     }
-    return levels;
+
+    details::registry::instance().set_levels(std::move(levels), global_level_found ? &global_level : nullptr);
 }
 
 } // namespace helpers

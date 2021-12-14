@@ -14,14 +14,14 @@
 using namespace std::chrono;
 
 namespace sched {
-    class WorkersBusyException : public std::exception
-    {
-    public:
-        WorkersBusyException(milliseconds estimatedDurationInMs);
-        const char * what () const throw ();
-    private:
-        milliseconds estimatedDurationInMs;
-    };
+class WorkersBusyException : public std::exception
+{
+public:
+    WorkersBusyException(milliseconds estimatedDurationInMs);
+    const char * what () const throw ();
+private:
+    milliseconds estimatedDurationInMs;
+};
 }
 
 #endif /* workers_busy_exception_hpp */

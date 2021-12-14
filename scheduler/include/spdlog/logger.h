@@ -16,6 +16,7 @@
 
 #include <spdlog/common.h>
 #include <spdlog/details/log_msg.h>
+#include <spdlog/details/backtracer.h>
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #    ifndef _WIN32
@@ -110,23 +111,28 @@ public:
 
     void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
     {
-        if (!should_log(lvl))
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
         {
             return;
         }
+
         details::log_msg log_msg(log_time, loc, name_, lvl, msg);
-        sink_it_(log_msg);
+        log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
     void log(source_loc loc, level::level_enum lvl, string_view_t msg)
     {
-        if (!should_log(lvl))
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
         {
             return;
         }
 
         details::log_msg log_msg(loc, name_, lvl, msg);
-        sink_it_(log_msg);
+        log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
     void log(level::level_enum lvl, string_view_t msg)
@@ -185,7 +191,9 @@ public:
 
     void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, wstring_view_t msg)
     {
-        if (!should_log(lvl))
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
         {
             return;
         }
@@ -193,12 +201,14 @@ public:
         memory_buf_t buf;
         details::os::wstr_to_utf8buf(wstring_view_t(msg.data(), msg.size()), buf);
         details::log_msg log_msg(log_time, loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-        sink_it_(log_msg);
+        log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
     void log(source_loc loc, level::level_enum lvl, wstring_view_t msg)
     {
-        if (!should_log(lvl))
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
         {
             return;
         }
@@ -206,7 +216,7 @@ public:
         memory_buf_t buf;
         details::os::wstr_to_utf8buf(wstring_view_t(msg.data(), msg.size()), buf);
         details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-        sink_it_(log_msg);
+        log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
     void log(level::level_enum lvl, wstring_view_t msg)
@@ -293,6 +303,12 @@ public:
         return msg_level >= level_.load(std::memory_order_relaxed);
     }
 
+    // return true if backtrace logging is enabled.
+    bool should_backtrace() const
+    {
+        return tracer_.enabled();
+    }
+
     void set_level(level::level_enum log_level);
 
     level::level_enum level() const;
@@ -303,12 +319,13 @@ public:
     // each sink will get a separate instance of the formatter object.
     void set_formatter(std::unique_ptr<formatter> f);
 
+    void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
-    template<typename Formatter, typename... Args>
-    void set_formatter(Args &&...args)
-    {
-        set_formatter(details::make_unique<Formatter>(std::forward<Args>(args)...));
-    }
+    // backtrace support.
+    // efficiently store all debug/trace messages in a circular buffer until needed for debugging.
+    void enable_backtrace(size_t n_messages);
+    void disable_backtrace();
+    void dump_backtrace();
 
     // flush functions
     void flush();
@@ -332,12 +349,15 @@ protected:
     spdlog::level_t level_{level::info};
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
+    details::backtracer tracer_;
 
     // common implementation for after templated public api has been resolved
     template<typename... Args>
     void log_(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&... args)
     {
-        if (!should_log(lvl))
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
         {
             return;
         }
@@ -350,7 +370,7 @@ protected:
             fmt::detail::vformat_to(buf, fmt, fmt::make_format_args(std::forward<Args>(args)...));
 #endif
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            sink_it_(log_msg);
+            log_it_(log_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH(loc)
     }
@@ -359,7 +379,9 @@ protected:
     template<typename... Args>
     void log_(source_loc loc, level::level_enum lvl, wstring_view_t fmt, Args &&... args)
     {
-        if (!should_log(lvl))
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
         {
             return;
         }
@@ -375,8 +397,8 @@ protected:
 #    endif
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
-            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));            
-            sink_it_(log_msg);
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+            log_it_(log_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH(loc)
     }
@@ -385,7 +407,9 @@ protected:
     template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::wstring_view_t>::value, int>::type = 0>
     void log_(source_loc loc, level::level_enum lvl, const T &msg)
     {
-        if (!should_log(lvl))
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
         {
             return;
         }
@@ -394,16 +418,19 @@ protected:
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(msg, buf);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            sink_it_(log_msg);
+            log_it_(log_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH(loc)
     }
 
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
-    // log the given message (if the given log level is high enough).
+    // log the given message (if the given log level is high enough),
+    // and save backtrace (if backtrace is enabled).
+    void log_it_(const details::log_msg &log_msg, bool log_enabled, bool traceback_enabled);
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
+    void dump_backtrace_();
     bool should_flush_(const details::log_msg &msg);
 
     // handle errors during logging.

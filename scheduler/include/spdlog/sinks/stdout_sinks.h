@@ -32,6 +32,8 @@ public:
 
     void log(const details::log_msg &msg) override;
     void flush() override;
+    void set_pattern(const std::string &pattern) override;
+
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
 
 protected:

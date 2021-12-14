@@ -6,6 +6,7 @@
 #include "base_sink.h"
 #include <spdlog/details/log_msg.h>
 #include <spdlog/details/null_mutex.h>
+#include <spdlog/pattern_formatter.h>
 
 #include <algorithm>
 #include <memory>
@@ -71,6 +72,11 @@ protected:
         {
             sink->flush();
         }
+    }
+
+    void set_pattern_(const std::string &pattern) override
+    {
+        set_formatter_(details::make_unique<spdlog::pattern_formatter>(pattern));
     }
 
     void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter) override

@@ -11,13 +11,13 @@
 using namespace std;
 
 namespace sched {
-    WorkersBusyException::WorkersBusyException(milliseconds estimatedDurationInMs) : estimatedDurationInMs(estimatedDurationInMs){
-        
-    }
+WorkersBusyException::WorkersBusyException(milliseconds estimatedDurationInMs) : estimatedDurationInMs(estimatedDurationInMs) {
+    
+}
 
-    const char * WorkersBusyException::what () const throw ()
-    {
-        string msg = "All workers are currently busy. Next available slot will be in " + to_string(estimatedDurationInMs.count());
-        return strdup(msg.c_str());
-    }
+const char * WorkersBusyException::what () const throw ()
+{
+    string msg = "All workers are currently busy. Next available slot will be in " + to_string(estimatedDurationInMs.count());
+    return strdup(msg.c_str());
+}
 }

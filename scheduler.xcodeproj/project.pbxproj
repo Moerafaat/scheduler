@@ -11,6 +11,8 @@
 		D89717A0276406CB00292AA0 /* cron_scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D897179E276406CB00292AA0 /* cron_scheduler.cpp */; };
 		D89717A4276406D800292AA0 /* thread_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717A2276406D800292AA0 /* thread_pool.cpp */; };
 		D89717CA2766680C00292AA0 /* workers_busy_exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717C82766680C00292AA0 /* workers_busy_exception.cpp */; };
+		D89717D02767DBE800292AA0 /* unit_test_1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717CF2767DBE800292AA0 /* unit_test_1.cpp */; };
+		D89717DC2767EECC00292AA0 /* job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717DB2767EECC00292AA0 /* job.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -32,9 +34,13 @@
 		D897179F276406CB00292AA0 /* cron_scheduler.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cron_scheduler.hpp; sourceTree = "<group>"; };
 		D89717A2276406D800292AA0 /* thread_pool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = thread_pool.cpp; sourceTree = "<group>"; };
 		D89717A3276406D800292AA0 /* thread_pool.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = thread_pool.hpp; sourceTree = "<group>"; };
-		D89717B22764F9B400292AA0 /* spdlog */ = {isa = PBXFileReference; lastKnownFileType = folder; path = spdlog; sourceTree = "<group>"; };
 		D89717C82766680C00292AA0 /* workers_busy_exception.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = workers_busy_exception.cpp; sourceTree = "<group>"; };
 		D89717C92766680C00292AA0 /* workers_busy_exception.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = workers_busy_exception.hpp; sourceTree = "<group>"; };
+		D89717CF2767DBE800292AA0 /* unit_test_1.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = unit_test_1.cpp; sourceTree = "<group>"; };
+		D89717D32767DC0600292AA0 /* catch2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = catch2; sourceTree = "<group>"; };
+		D89717D62767EC6900292AA0 /* job.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = job.hpp; sourceTree = "<group>"; };
+		D89717DB2767EECC00292AA0 /* job.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = job.cpp; sourceTree = "<group>"; };
+		D89717E5276806A700292AA0 /* spdlog */ = {isa = PBXFileReference; lastKnownFileType = folder; path = spdlog; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +94,7 @@
 		D897179D276406B300292AA0 /* thread_pool */ = {
 			isa = PBXGroup;
 			children = (
+				D89717D42767EC5200292AA0 /* models */,
 				D89717C7276667D200292AA0 /* exceptions */,
 				D89717A2276406D800292AA0 /* thread_pool.cpp */,
 				D89717A3276406D800292AA0 /* thread_pool.hpp */,
@@ -98,6 +105,7 @@
 		D89717A82764F20E00292AA0 /* test */ = {
 			isa = PBXGroup;
 			children = (
+				D89717CF2767DBE800292AA0 /* unit_test_1.cpp */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -105,7 +113,8 @@
 		D89717AC2764F86300292AA0 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				D89717B22764F9B400292AA0 /* spdlog */,
+				D89717E5276806A700292AA0 /* spdlog */,
+				D89717D32767DC0600292AA0 /* catch2 */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -117,6 +126,15 @@
 				D89717C92766680C00292AA0 /* workers_busy_exception.hpp */,
 			);
 			path = exceptions;
+			sourceTree = "<group>";
+		};
+		D89717D42767EC5200292AA0 /* models */ = {
+			isa = PBXGroup;
+			children = (
+				D89717D62767EC6900292AA0 /* job.hpp */,
+				D89717DB2767EECC00292AA0 /* job.cpp */,
+			);
+			path = models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -175,8 +193,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D89717D02767DBE800292AA0 /* unit_test_1.cpp in Sources */,
 				D89717CA2766680C00292AA0 /* workers_busy_exception.cpp in Sources */,
 				D897178027638CCE00292AA0 /* main.cpp in Sources */,
+				D89717DC2767EECC00292AA0 /* job.cpp in Sources */,
 				D89717A0276406CB00292AA0 /* cron_scheduler.cpp in Sources */,
 				D89717A4276406D800292AA0 /* thread_pool.cpp in Sources */,
 			);

@@ -10,47 +10,66 @@
 
 #include "thread_pool.hpp"
 #include <queue>
+#include <set>
 
 namespace sched {
-    class CronScheduler {
-    public:
-        // Defaults to the maximum parallelizable threads on the hardware
-        CronScheduler(unsigned int poolSize = std::thread::hardware_concurrency());
-        ~CronScheduler();
-        
-        // Note:
-        // To support template functions inside non-template classes, the implementation has to be in the header file
-        // The other alternative is to specify all expected template instantiations in the implementation file which isn't feasible here
-        
-        // Dispatch jobs that have no arguments and no return
-        template <typename F>
-        void scheduleJob(const F &job, int jobId, std::chrono::milliseconds expectedIntervalMs, std::chrono::milliseconds frequency) {
-    //        validateInputsOrThrow();
-            threadPool.dispatchJob(job, jobId, expectedIntervalMs);
-    //        std::chrono::system_clock::time_point end = std::chrono::system_clock::now() + std::chrono::milliseconds(15000);
-    //        schedule.push(make_pair(end, jobId));
+class CronScheduler {
+public:
+    // poolSize -> Defaults to the maximum parallelizable threads on the hardware
+    // minAllowedFrequency -> Used to avoid schedule flooding
+    CronScheduler(unsigned int poolSize = thread::hardware_concurrency(), milliseconds minAllowedFrequency = milliseconds(5));
+    ~CronScheduler();
+    
+    // Note:
+    // To support template functions inside non-template classes, the implementation has to be in the header file
+    // The other alternative is to specify all expected template instantiations in the implementation file which isn't feasible here
+    
+    // Dispatch jobs that have no arguments and no return
+    template <typename F>
+    void scheduleJob(const F &job, int jobId, milliseconds expectedInterval, milliseconds frequency, bool softDeadline) {
+        Job jobObj = Job(job, jobId, expectedInterval, frequency, softDeadline);
+        validateInputsOrThrow(jobObj);
+        std::chrono::system_clock::time_point next = std::chrono::system_clock::now();
+        {
+            unique_lock<mutex> lock(scheduleMtx);
+            schedule.push(make_pair(next, jobObj));
+            scheduledJobs.insert(jobId);
         }
+        scheduleCv.notify_one();
+    }
 
-        // Dispatch jobs that have arguments and no return
-        template <typename F, typename... A>
-        void scheduleJob(const F &job, int jobId, std::chrono::milliseconds expectedIntervalMs, std::chrono::milliseconds frequency,
-                         const A &...args) {
-            scheduleJob([job, args...] {
-                job(args...);
-            }, jobId, expectedIntervalMs, frequency);
-        }
-        
-        void removeJob(int jobId);
-        
-        void terminate();
-        
-    private:
-        void validateInputsOrThrow();
-        void dispatcher();
-        
-        ThreadPool threadPool;
-        std::priority_queue<std::pair<std::chrono::system_clock::time_point, int>> schedule;
-    };
+    // Dispatch jobs that have arguments and no return
+    template <typename F, typename... A>
+    void scheduleJob(const F &job, int jobId, milliseconds expectedInterval, milliseconds frequency,  bool softDeadline,
+                     const A &...args) {
+        scheduleJob([job, args...] {
+            job(args...);
+        }, jobId, expectedInterval, frequency, softDeadline);
+    }
+    
+    // Remove job from the scheduler
+    void removeJob(int jobId);
+    
+    // Remove all jobs from the scheduler
+    void clearScheduler();
+    
+private:
+    void validateInputsOrThrow(Job job);                             // Validate user inputs or throw
+    void dispatcher();                                               // Main function that schedules jobs and dispatches them
+    void waitForJobs();                                              // Used during destruction to wait for workers
+    
+    thread dispatcherThread;
+    milliseconds minAllowedFrequency;
+    ThreadPool threadPool;
+    atomic<bool> schedulerRunning = {true};
+    mutex scheduleMtx;
+    condition_variable scheduleCv;
+    condition_variable jobRemovedCv;
+    priority_queue<pair<system_clock::time_point, Job>,
+                vector<pair<system_clock::time_point, Job>>,
+                greater<pair<system_clock::time_point, Job>>> schedule;
+    set<int> scheduledJobs;
+};
 }
 
 #endif /* cron_scheduler_hpp */

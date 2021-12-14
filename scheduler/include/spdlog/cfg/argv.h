@@ -3,6 +3,7 @@
 
 #pragma once
 #include <spdlog/cfg/helpers.h>
+#include <spdlog/details/registry.h>
 
 //
 // Init log levels using each argv entry that starts with "SPDLOG_LEVEL="
@@ -20,7 +21,7 @@ namespace spdlog {
 namespace cfg {
 
 // search for SPDLOG_LEVEL= in the args and use it to init the levels
-inline level_map load_argv_levels(int argc, const char **argv)
+inline void load_argv_levels(int argc, const char **argv)
 {
     const std::string spdlog_level_prefix = "SPDLOG_LEVEL=";
     for (int i = 1; i < argc; i++)
@@ -29,17 +30,14 @@ inline level_map load_argv_levels(int argc, const char **argv)
         if (arg.find(spdlog_level_prefix) == 0)
         {
             auto levels_string = arg.substr(spdlog_level_prefix.size());
-            return helpers::load_levels(levels_string);
+            helpers::load_levels(levels_string);
         }
     }
-
-    // the "SPDLOG_LEVEL=" prefix was not found in any of the argv items
-    return std::unordered_map<std::string, level::level_enum>{};
 }
 
-inline level_map load_argv_levels(int argc, char **argv)
+inline void load_argv_levels(int argc, char **argv)
 {
-    return load_argv_levels(argc, const_cast<const char **>(argv));
+    load_argv_levels(argc, const_cast<const char **>(argv));
 }
 
 } // namespace cfg

@@ -7,7 +7,7 @@
 #    include <spdlog/sinks/ansicolor_sink.h>
 #endif
 
-#include <spdlog/default_formatter.h>
+#include <spdlog/pattern_formatter.h>
 #include <spdlog/details/os.h>
 
 namespace spdlog {
@@ -17,7 +17,7 @@ template<typename ConsoleMutex>
 SPDLOG_INLINE ansicolor_sink<ConsoleMutex>::ansicolor_sink(FILE *target_file, color_mode mode)
     : target_file_(target_file)
     , mutex_(ConsoleMutex::mutex())
-    , formatter_(details::make_unique<spdlog::default_formatter>())
+    , formatter_(details::make_unique<spdlog::pattern_formatter>())
 
 {
     set_color_mode(mode);
@@ -70,6 +70,13 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::flush()
 {
     std::lock_guard<mutex_t> lock(mutex_);
     fflush(target_file_);
+}
+
+template<typename ConsoleMutex>
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_pattern(const std::string &pattern)
+{
+    std::lock_guard<mutex_t> lock(mutex_);
+    formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
 }
 
 template<typename ConsoleMutex>
