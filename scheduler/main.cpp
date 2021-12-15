@@ -40,7 +40,7 @@ int main(int argc, const char * argv[]) {
     for(int i=1; i<5; i++) {
         try {
             scheduler.scheduleJob(testFunctionWithParameter, i, milliseconds(5000), milliseconds(10000), true, i);
-        } catch(exception& ex) {
+        } catch(invalid_argument& ex) {
             spdlog::error("Arguments passed are invalid. Details: {}", ex.what());
         }
     }

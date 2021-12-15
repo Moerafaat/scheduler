@@ -19,9 +19,14 @@ threadPool(poolSize), minAllowedFrequency(minAllowedFrequency) {
 CronScheduler::~CronScheduler() {
     spdlog::info("~CronScheduler() - Terminating...");
     
+    spdlog::info("~CronScheduler() - Waiting for jobs to finish...");
     waitForJobs();
     schedulerRunning = false;
+    scheduleCv.notify_all();
+    spdlog::info("~CronScheduler() - Joining threads...");
     dispatcherThread.join();
+    
+    spdlog::info("~CronScheduler() - Terminated successfully");
 }
 
 void CronScheduler::removeJob(int jobId) {
