@@ -19,6 +19,7 @@
 		D897182E276A8B0600292AA0 /* workers_busy_exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717C82766680C00292AA0 /* workers_busy_exception.cpp */; };
 		D897182F276A8B0600292AA0 /* thread_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717A2276406D800292AA0 /* thread_pool.cpp */; };
 		D8971830276A8B0600292AA0 /* cron_scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D897179E276406CB00292AA0 /* cron_scheduler.cpp */; };
+		D897183C276AA0F300292AA0 /* test_jobs_schedule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D897183B276AA0F300292AA0 /* test_jobs_schedule.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -60,6 +61,7 @@
 		D897181227692D2800292AA0 /* test_jobs_invoked.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_jobs_invoked.cpp; sourceTree = "<group>"; };
 		D8971816276A7D3800292AA0 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D8971819276A822500292AA0 /* test_jobs_async.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_jobs_async.cpp; sourceTree = "<group>"; };
+		D897183B276AA0F300292AA0 /* test_jobs_schedule.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_jobs_schedule.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +165,7 @@
 				D89717EE27692A9D00292AA0 /* test_main.cpp */,
 				D897181227692D2800292AA0 /* test_jobs_invoked.cpp */,
 				D8971819276A822500292AA0 /* test_jobs_async.cpp */,
+				D897183B276AA0F300292AA0 /* test_jobs_schedule.cpp */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D897183C276AA0F300292AA0 /* test_jobs_schedule.cpp in Sources */,
 				D897182D276A8B0600292AA0 /* job.cpp in Sources */,
 				D897182E276A8B0600292AA0 /* workers_busy_exception.cpp in Sources */,
 				D897182F276A8B0600292AA0 /* thread_pool.cpp in Sources */,

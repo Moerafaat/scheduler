@@ -12,14 +12,14 @@ using namespace std;
 using namespace std::chrono;
 using namespace sched;
 
-void testFunctionWithoutParameter() {
+void testFunctionWithoutParameter_invoked() {
     spdlog::info("Inside testFunctionWithoutParameter");
     for(int i=0; i<10; i++) {
         this_thread::sleep_for(milliseconds(1000));
     }
 }
 
-void testFunctionWithParameter(int number) {
+void testFunctionWithParameter_invoked(int number) {
     spdlog::info("Inside testFunctionWithParameter {}", number);
     for(int i=0; i<5; i++) {
         this_thread::sleep_for(milliseconds(1000));

@@ -10,6 +10,7 @@
 
 using namespace sched;
 
+namespace test_jobs_invoked {
 bool invoked = false;
 int value = 0;
 
@@ -21,39 +22,39 @@ void testFunctionWithParameter(int val) {
     invoked = true;
     value = val;
 }
-
+}
 
 TEST_CASE( "Test that functions are invoked", "[CronScheduler]" ) {
     SECTION("Test that function without parameter is invoked") {
         // SETUP
-        invoked = false;
+        test_jobs_invoked::invoked = false;
         CronScheduler scheduler;
 
         // PROCESS
-        scheduler.scheduleJob(testFunctionWithoutParameter, 1, milliseconds(1), milliseconds(5000), true);
+        scheduler.scheduleJob(test_jobs_invoked::testFunctionWithoutParameter, 1, milliseconds(1), milliseconds(5000), true);
 
         // TEARDOWN
         this_thread::sleep_for(seconds(1));
         scheduler.clearScheduler();
         
         //ASSERT
-        REQUIRE(invoked);
+        REQUIRE(test_jobs_invoked::invoked);
     }
     
     SECTION("Test that function with parameter is invoked") {
         // SETUP
-        invoked = false;
+        test_jobs_invoked::invoked = false;
         CronScheduler scheduler;
 
         // PROCESS
-        scheduler.scheduleJob(testFunctionWithParameter, 1, milliseconds(1), milliseconds(5000), true, 2);
+        scheduler.scheduleJob(test_jobs_invoked::testFunctionWithParameter, 1, milliseconds(1), milliseconds(5000), true, 2);
 
         // TEARDOWN
         this_thread::sleep_for(seconds(1));
         scheduler.clearScheduler();
         
         //ASSERT
-        REQUIRE(invoked);
-        REQUIRE(value == 2);
+        REQUIRE(test_jobs_invoked::invoked);
+        REQUIRE(test_jobs_invoked::value == 2);
     }
 }

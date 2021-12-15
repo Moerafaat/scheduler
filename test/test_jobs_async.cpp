@@ -14,6 +14,7 @@ using namespace std;
 using namespace std::chrono;
 using namespace sched;
 
+namespace test_jobs_async {
 system_clock::time_point t1;
 system_clock::time_point t2;
 system_clock::time_point t3;
@@ -29,16 +30,17 @@ void sleepFor5Seconds() {
     t3 = system_clock::now();
 }
 
+}
+
 TEST_CASE( "Test that jobs run concurrently", "[CronScheduler]" ) {
     {
         // SETUP
         CronScheduler scheduler;
 
         // PROCESS
-        t1 = system_clock::now();
-        scheduler.scheduleJob(sleepFor2Seconds, 1, milliseconds(2000), milliseconds(10000), true);
-        scheduler.scheduleJob(sleepFor5Seconds, 2, milliseconds(5000), milliseconds(10000), true);
-
+        test_jobs_async::t1 = system_clock::now();
+        scheduler.scheduleJob(test_jobs_async::sleepFor2Seconds, 1, milliseconds(2000), milliseconds(10000), true);
+        scheduler.scheduleJob(test_jobs_async::sleepFor5Seconds, 2, milliseconds(5000), milliseconds(10000), true);
 
         // TEARDOWN
         this_thread::sleep_for(seconds(1));
@@ -46,8 +48,8 @@ TEST_CASE( "Test that jobs run concurrently", "[CronScheduler]" ) {
     }
     
     //ASSERT
-    milliseconds diff1 = duration_cast<milliseconds>(t2 - t1);
-    milliseconds diff2 = duration_cast<milliseconds>(t3 - t1);
+    milliseconds diff1 = duration_cast<milliseconds>(test_jobs_async::t2 - test_jobs_async::t1);
+    milliseconds diff2 = duration_cast<milliseconds>(test_jobs_async::t3 - test_jobs_async::t1);
     REQUIRE(diff1 < milliseconds(2050)); // The 50 milliseconds exist as an acceptable margins
     REQUIRE(diff2 < milliseconds(5050)); // The 50 milliseconds exist as an acceptable margins
 }
