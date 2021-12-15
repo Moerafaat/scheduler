@@ -11,12 +11,22 @@
 		D89717A0276406CB00292AA0 /* cron_scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D897179E276406CB00292AA0 /* cron_scheduler.cpp */; };
 		D89717A4276406D800292AA0 /* thread_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717A2276406D800292AA0 /* thread_pool.cpp */; };
 		D89717CA2766680C00292AA0 /* workers_busy_exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717C82766680C00292AA0 /* workers_busy_exception.cpp */; };
-		D89717D02767DBE800292AA0 /* unit_test_1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717CF2767DBE800292AA0 /* unit_test_1.cpp */; };
 		D89717DC2767EECC00292AA0 /* job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717DB2767EECC00292AA0 /* job.cpp */; };
+		D89717EF27692A9D00292AA0 /* test_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D89717EE27692A9D00292AA0 /* test_main.cpp */; };
+		D897181327692D2800292AA0 /* unit_test_1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D897181227692D2800292AA0 /* unit_test_1.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		D897177A27638CCE00292AA0 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D89717EA27692A9D00292AA0 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -36,15 +46,24 @@
 		D89717A3276406D800292AA0 /* thread_pool.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = thread_pool.hpp; sourceTree = "<group>"; };
 		D89717C82766680C00292AA0 /* workers_busy_exception.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = workers_busy_exception.cpp; sourceTree = "<group>"; };
 		D89717C92766680C00292AA0 /* workers_busy_exception.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = workers_busy_exception.hpp; sourceTree = "<group>"; };
-		D89717CF2767DBE800292AA0 /* unit_test_1.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = unit_test_1.cpp; sourceTree = "<group>"; };
-		D89717D32767DC0600292AA0 /* catch2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = catch2; sourceTree = "<group>"; };
 		D89717D62767EC6900292AA0 /* job.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = job.hpp; sourceTree = "<group>"; };
 		D89717DB2767EECC00292AA0 /* job.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = job.cpp; sourceTree = "<group>"; };
 		D89717E5276806A700292AA0 /* spdlog */ = {isa = PBXFileReference; lastKnownFileType = folder; path = spdlog; sourceTree = "<group>"; };
+		D89717EC27692A9D00292AA0 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
+		D89717EE27692A9D00292AA0 /* test_main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_main.cpp; sourceTree = "<group>"; };
+		D89717F627692BD100292AA0 /* catch2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = catch2; sourceTree = "<group>"; };
+		D897181227692D2800292AA0 /* unit_test_1.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = unit_test_1.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D897177927638CCE00292AA0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D89717E927692A9D00292AA0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -58,6 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				D897177E27638CCE00292AA0 /* scheduler */,
+				D89717ED27692A9D00292AA0 /* test */,
 				D897177D27638CCE00292AA0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -66,6 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				D897177C27638CCE00292AA0 /* scheduler */,
+				D89717EC27692A9D00292AA0 /* test */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -74,7 +95,6 @@
 			isa = PBXGroup;
 			children = (
 				D89717AC2764F86300292AA0 /* include */,
-				D89717A82764F20E00292AA0 /* test */,
 				D897179C276406A600292AA0 /* cron_scheduler */,
 				D897177F27638CCE00292AA0 /* main.cpp */,
 			);
@@ -102,19 +122,10 @@
 			path = thread_pool;
 			sourceTree = "<group>";
 		};
-		D89717A82764F20E00292AA0 /* test */ = {
-			isa = PBXGroup;
-			children = (
-				D89717CF2767DBE800292AA0 /* unit_test_1.cpp */,
-			);
-			path = test;
-			sourceTree = "<group>";
-		};
 		D89717AC2764F86300292AA0 /* include */ = {
 			isa = PBXGroup;
 			children = (
 				D89717E5276806A700292AA0 /* spdlog */,
-				D89717D32767DC0600292AA0 /* catch2 */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -137,6 +148,24 @@
 			path = models;
 			sourceTree = "<group>";
 		};
+		D89717ED27692A9D00292AA0 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				D89717F527692B4A00292AA0 /* include */,
+				D89717EE27692A9D00292AA0 /* test_main.cpp */,
+				D897181227692D2800292AA0 /* unit_test_1.cpp */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
+		D89717F527692B4A00292AA0 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				D89717F627692BD100292AA0 /* catch2 */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -157,6 +186,23 @@
 			productReference = D897177C27638CCE00292AA0 /* scheduler */;
 			productType = "com.apple.product-type.tool";
 		};
+		D89717EB27692A9D00292AA0 /* test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D89717F027692A9D00292AA0 /* Build configuration list for PBXNativeTarget "test" */;
+			buildPhases = (
+				D89717E827692A9D00292AA0 /* Sources */,
+				D89717E927692A9D00292AA0 /* Frameworks */,
+				D89717EA27692A9D00292AA0 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = test;
+			productName = test;
+			productReference = D89717EC27692A9D00292AA0 /* test */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -166,6 +212,9 @@
 				LastUpgradeCheck = 1240;
 				TargetAttributes = {
 					D897177B27638CCE00292AA0 = {
+						CreatedOnToolsVersion = 12.4;
+					};
+					D89717EB27692A9D00292AA0 = {
 						CreatedOnToolsVersion = 12.4;
 					};
 				};
@@ -184,6 +233,7 @@
 			projectRoot = "";
 			targets = (
 				D897177B27638CCE00292AA0 /* scheduler */,
+				D89717EB27692A9D00292AA0 /* test */,
 			);
 		};
 /* End PBXProject section */
@@ -193,12 +243,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D89717D02767DBE800292AA0 /* unit_test_1.cpp in Sources */,
 				D89717CA2766680C00292AA0 /* workers_busy_exception.cpp in Sources */,
 				D897178027638CCE00292AA0 /* main.cpp in Sources */,
 				D89717DC2767EECC00292AA0 /* job.cpp in Sources */,
 				D89717A0276406CB00292AA0 /* cron_scheduler.cpp in Sources */,
 				D89717A4276406D800292AA0 /* thread_pool.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D89717E827692A9D00292AA0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D89717EF27692A9D00292AA0 /* test_main.cpp in Sources */,
+				D897181327692D2800292AA0 /* unit_test_1.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,13 +314,19 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "${SRCROOT}/scheduler/include/**";
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/scheduler/include/**",
+					"${SRCROOT}/test/include/**",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 11.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/scheduler/include/**";
+				USER_HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/scheduler/include/**",
+					"${SRCROOT}/test/include/**",
+				);
 			};
 			name = Debug;
 		};
@@ -311,12 +375,22 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "${SRCROOT}/scheduler/include/**";
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/scheduler/include/**",
+					"${SRCROOT}/test/include/**",
+				);
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					"${SRCROOT}/scheduler/include/**",
+					"${SRCROOT}/test/include/**",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 11.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/scheduler/include/**";
+				USER_HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/scheduler/include/**",
+					"${SRCROOT}/test/include/**",
+				);
 			};
 			name = Release;
 		};
@@ -331,6 +405,26 @@
 		D897178527638CCE00292AA0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		D89717F127692A9D00292AA0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D89717F227692A9D00292AA0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -353,6 +447,15 @@
 			buildConfigurations = (
 				D897178427638CCE00292AA0 /* Debug */,
 				D897178527638CCE00292AA0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D89717F027692A9D00292AA0 /* Build configuration list for PBXNativeTarget "test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D89717F127692A9D00292AA0 /* Debug */,
+				D89717F227692A9D00292AA0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

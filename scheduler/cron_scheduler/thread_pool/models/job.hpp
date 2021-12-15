@@ -19,6 +19,7 @@ class Job {
 public:
     Job();
     Job(function<void()> jobFunction, int jobId, milliseconds expectedInterval, milliseconds frequency, bool softDeadline);
+    
     bool operator<(const Job& job) const;
     
     function<void()> jobFunction;

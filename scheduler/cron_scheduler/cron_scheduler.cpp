@@ -72,7 +72,11 @@ void CronScheduler::dispatcher() {
             job = schedule.top();
             schedule.pop();
         }
-        threadPool.dispatchJob(job.second);
+        try {
+            threadPool.dispatchJob(job.second);
+        } catch(WorkersBusyException ex) {
+            spdlog::error("A job with a hard deadline couldn't be scheduled on time. Details: {}", ex.what());
+        }
         system_clock::time_point next = system_clock::now() + job.second.frequency;
         {
             unique_lock<mutex> lock(scheduleMtx);
